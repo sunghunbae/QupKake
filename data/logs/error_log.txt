@@ -1,0 +1,82 @@
+2025-06-24 12:41:24 [ERROR]: Error processing molecule
+2025-06-24 12:41:24 [ERROR]: Error: 'fukui'
+2025-06-24 12:41:24 [ERROR]: Traceback (most recent call last):
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 508, in get_xtb_attributes
+    mol_attributes["atomprop"]["fukui"] = fukui["atomprop"]["fukui"]
+KeyError: 'fukui'
+
+2025-06-24 12:41:26 [ERROR]: Error processing molecule
+2025-06-24 12:41:26 [ERROR]: Error: 'fukui'
+2025-06-24 12:41:26 [ERROR]: Traceback (most recent call last):
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 508, in get_xtb_attributes
+    mol_attributes["atomprop"]["fukui"] = fukui["atomprop"]["fukui"]
+KeyError: 'fukui'
+
+2025-06-24 12:41:28 [ERROR]: Error processing molecule
+2025-06-24 12:41:28 [ERROR]: Error: 'fukui'
+2025-06-24 12:41:28 [ERROR]: Traceback (most recent call last):
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 508, in get_xtb_attributes
+    mol_attributes["atomprop"]["fukui"] = fukui["atomprop"]["fukui"]
+KeyError: 'fukui'
+
+2025-06-24 12:41:31 [ERROR]: Error processing molecule
+2025-06-24 12:41:31 [ERROR]: Error: 'fukui'
+2025-06-24 12:41:31 [ERROR]: Traceback (most recent call last):
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 508, in get_xtb_attributes
+    mol_attributes["atomprop"]["fukui"] = fukui["atomprop"]["fukui"]
+KeyError: 'fukui'
+
+2025-06-24 12:41:33 [ERROR]: Error processing molecule
+2025-06-24 12:41:33 [ERROR]: Error: 'fukui'
+2025-06-24 12:41:33 [ERROR]: Traceback (most recent call last):
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 508, in get_xtb_attributes
+    mol_attributes["atomprop"]["fukui"] = fukui["atomprop"]["fukui"]
+KeyError: 'fukui'
+
+2025-06-24 12:41:33 [ERROR]: 0 failed all 5 retry attempts
+2025-06-24 12:41:33 [ERROR]: Error: 'atomprop'
+2025-06-24 12:41:33 [ERROR]: Traceback (most recent call last):
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/mol_dataset.py", line 705, in _process_row_with_retry
+    data = self._get_graph(row)
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/mol_dataset.py", line 659, in _get_graph
+    mol_data = Featurizer(
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 410, in __init__
+    self.data = self.set_graph()
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 598, in set_graph
+    X = self.construct_node_features(n_nodes, mol_attributes)
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 522, in construct_node_features
+    X[atom.GetIdx()] = self.get_atom_features(atom, mol_attributes)
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 441, in get_atom_features
+    return self.atom_featurizer.get_atom_features(atom, attributes)
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 201, in get_atom_features
+    atom_feature_vector += [attributes["atomprop"]["q"][atom.GetIdx()]]
+KeyError: 'atomprop'
+
+2025-06-24 12:41:33 [ERROR]: Error processing row 0
+2025-06-24 12:41:33 [ERROR]: Error: Error processing row
+2025-06-24 12:41:33 [ERROR]: Traceback (most recent call last):
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/mol_dataset.py", line 705, in _process_row_with_retry
+    data = self._get_graph(row)
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/mol_dataset.py", line 659, in _get_graph
+    mol_data = Featurizer(
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 410, in __init__
+    self.data = self.set_graph()
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 598, in set_graph
+    X = self.construct_node_features(n_nodes, mol_attributes)
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 522, in construct_node_features
+    X[atom.GetIdx()] = self.get_atom_features(atom, mol_attributes)
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 441, in get_atom_features
+    return self.atom_featurizer.get_atom_features(atom, attributes)
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/featurizer.py", line 201, in get_atom_features
+    atom_feature_vector += [attributes["atomprop"]["q"][atom.GetIdx()]]
+KeyError: 'atomprop'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/mol_dataset.py", line 685, in _process_chunk
+    self._process_row_with_retry(row)
+  File "/home2/shbae/miniforge3/envs/qupkake/lib/python3.9/site-packages/qupkake/mol_dataset.py", line 713, in _process_row_with_retry
+    raise (Exception("Error processing row"))
+Exception: Error processing row
+
