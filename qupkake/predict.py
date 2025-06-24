@@ -125,7 +125,8 @@ def load_models() -> Tuple[SitesPrediction, SitesPrediction, PredictpKa]:
         map_location=torch.device("cpu"),
     )
     pka_model = PredictpKa.load_from_checkpoint(
-        os.path.join(models_path, "pka_model.ckpt"), map_location=torch.device("cpu")
+        os.path.join(models_path, "pka_model.ckpt"), 
+        map_location=torch.device("cpu"),
     )
     return prot_model, deprot_model, pka_model
 

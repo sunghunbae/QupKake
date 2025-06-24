@@ -8,23 +8,53 @@ __version__ = get_versions()["version"]
 
 import os
 import subprocess
+import shutil
+import re
+import tempfile
+
+XTB_VERSION = None
 
 try:
-    check_package = subprocess.run(["conda", "list", "xtb"], stdout=subprocess.PIPE)
-    check_package_decoded = check_package.stdout.decode("utf-8").split()
-    assert "xtb" in check_package_decoded
-    assert "6.4.1" in check_package_decoded
+    XTB_LOCATION = shutil.which('xtb')
+    assert XTB_LOCATION is not None
+    proc = subprocess.run(['xtb', '--version'], capture_output=True, text=True)
+    assert proc.returncode == 0, "xtb is not accessible"
+    match = re.search('xtb\s+version\s+(?P<version>[\d.]+)', proc.stdout)
+    if match:
+        XTB_VERSION = match.group('version')
+    assert XTB_VERSION and XTB_VERSION >= '6.4.1'
 
-    XTB_LOCATION = os.environ.get("XTBPATH") or "xtb"
-except AssertionError:
-    XTB_LOCATION = os.environ.get("XTBPATH") or os.path.join(
-        os.path.dirname(__file__), "xtb-641/bin/xtb"
-    )
-finally:
-    if XTB_LOCATION != "xtb":
-        if not os.path.exists(XTB_LOCATION):
-            raise RuntimeError(f'xTB exectuable in: "{XTB_LOCATION}" does not exists.')
-    else:
-        raise RuntimeError(
-            'Conda version of xTB is currently not supported.\nPlease compile it from source and export the path manually to "XTBPATH" environment variable.'
-        )
+except:
+    XTB_LOCATION = os.path.join(os.path.dirname(__file__), "xtb-641/bin/xtb")
+    XTB_VERSION = '6.4.1'
+
+try:
+    h2o = [
+        '$coord',
+        ' 0.00000000000000      0.00000000000000     -0.73578586109551      o',
+        ' 1.44183152868459      0.00000000000000      0.36789293054775      h',
+        '-1.44183152868459      0.00000000000000      0.36789293054775      h',
+        '$end',
+    ]
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        test_geometry = os.path.join(temp_dir, 'coord')
+        with open(test_geometry, 'w') as f:
+            f.write('\n'.join(h2o))
+        proc = subprocess.run(['xtb', test_geometry, '--opt'], capture_output=True, text=True)
+        assert proc.returncode == 0
+
+except:
+    raise RuntimeError("""
+                       
+Conda installed xTB has the Fortran runtime error in geometry optimization. 
+Please install xtb using the compiled binary:
+                       
+$ wget https://github.com/grimme-lab/xtb/releases/download/v6.7.1/xtb-6.7.1-linux-x86_64.tar.xz
+$ tar -xf xtb-6.7.1-linux-x86_64.tar.xz
+$ cp -r xtb-dist/bin/*      /usr/local/bin/
+$ cp -r xtb-dist/lib/*      /usr/local/lib/
+$ cp -r xtb-dist/include/*  /usr/local/include/
+$ cp -r xtb-dist/share      /usr/local/
+        
+""")
