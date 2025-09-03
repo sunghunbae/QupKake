@@ -17,6 +17,7 @@ from tqdm import tqdm
 
 from .featurizer import Featurizer
 from .mol_utils import Tautomerize
+from .tautomerism import ComprehensiveTautomer
 
 RDLogger.DisableLog("rdApp.*")
 
