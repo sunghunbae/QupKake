@@ -11,8 +11,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
-from .xtbp import XTBP, RunXTB
-from .tautomerism import ComprehensiveTautomer
+from qupkake.xtbp import XTBP, RunXTB
 
 
 class Tautomerize:
@@ -121,21 +120,13 @@ class Tautomerize:
         """Get RDKit mol object of the original smiles"""
         return self.mol
 
-    def set_tautomers(self, comprehensive: bool = True) -> List[Chem.Mol]:
+    def set_tautomers(self) -> List[Chem.Mol]:
         """Create list of possible tautomers"""
-        if not comprehensive:
-            enumerator = rdMolStandardize.TautomerEnumerator()
-            # enumerator.Canonicalize(self.mol)
-            tauts = enumerator.Enumerate(Chem.RemoveHs(self.mol))
-        else:
-            # comprehensive tautomer enumeration
-            ct = ComprehensiveTautomer(self.smiles).enumerate()
-            tauts = [Chem.MolFromSmiles(x) for x in ct.enumerated]
+        enumerator = rdMolStandardize.TautomerEnumerator()
+        # enumerator.Canonicalize(self.mol)
+        tauts = enumerator.Enumerate(Chem.RemoveHs(self.mol))
         tauts = [Chem.AddHs(x, addCoords=True) for x in tauts]
-
         return tauts
-    
-
 
     def get_tautomers(self, smiles: bool = False) -> List[Union[str, Chem.Mol]]:
         """return a list of tautomers
@@ -163,19 +154,12 @@ class Tautomerize:
             self.lowest_tautomer_name = f"{self.name}_t{self.lowest_tautomer_num}"
             return
 
-        from tqdm import tqdm
 
         # os.makedirs(self.mol_dir, exist_ok=True)
         tautomer_energy = []
         with tempfile.TemporaryDirectory() as tmpdirname:
-            pbar = tqdm(
-                enumerate(self.tautomers),
-                total=len(self.tautomers),
-                leave=False,
-                position=1,
-            )
-            for i, taut in pbar:
-                pbar.set_description(f"Processing {self.name} tautomer {i}")
+            for i, taut in enumerate(self.tautomers):
+                # pbar.set_description(f"Processing {self.name} tautomer {i}")
                 taut_file = f"{tmpdirname}/{self.name}_t{i}.mol"
                 Chem.MolToMolFile(taut, taut_file)
                 xtb_out = RunXTB(

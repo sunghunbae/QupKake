@@ -6,26 +6,42 @@ from typing import Tuple, Union
 
 import pandas as pd
 import pytorch_lightning as pl
+
 import torch
-from rdkit.Chem import PandasTools
+
 from torch_geometric.loader import DataLoader
 from torch_geometric.transforms import Compose, NormalizeFeatures
 
-from .mol_dataset import MolDataset, MolPairDataset
-from .pka_models import PredictpKa
-from .sites_models import SitesPrediction
-from .transforms import IncludeEnergy, ToTensor
+from rdkit.Chem import PandasTools
+
+from qupkake.mol_dataset import MolDataset, MolPairDataset
+from qupkake.pka_models import PredictpKa
+from qupkake.sites_models import SitesPrediction
+from qupkake.transforms import IncludeEnergy, ToTensor
 
 warnings.filterwarnings(
-    "ignore", ".*Consider increasing the value of the `num_workers` argument*"
+    "ignore", 
+    message=".*Consider increasing the value of the `num_workers` argument*"
 )
 
-warnings.filterwarnings("ignore", ".*If your intention is to run Lightning on SLURM*")
+warnings.filterwarnings(
+    "ignore", 
+    message=".*If your intention is to run Lightning on SLURM*")
+
+warnings.filterwarnings(
+    "ignore",
+    message="GPU available but not used. You can set it by doing `Trainer(accelerator='gpu')`.")
+
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 log = logging.getLogger("pytorch_lightning")
 log.propagate = False
 log.setLevel(logging.ERROR)
+
+
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+accelerator = "auto"
 
 
 def load_mol_dataset(
@@ -118,15 +134,14 @@ def load_models() -> Tuple[SitesPrediction, SitesPrediction, PredictpKa]:
     models_path = impresources.files(models)
     prot_model = SitesPrediction.load_from_checkpoint(
         os.path.join(models_path, "protonation_model.ckpt"),
-        map_location=torch.device("cpu"),
+        map_location=torch.device(device),
     )
     deprot_model = SitesPrediction.load_from_checkpoint(
         os.path.join(models_path, "deprotonation_model.ckpt"),
-        map_location=torch.device("cpu"),
+        map_location=torch.device(device),
     )
     pka_model = PredictpKa.load_from_checkpoint(
-        os.path.join(models_path, "pka_model.ckpt"), 
-        map_location=torch.device("cpu"),
+        os.path.join(models_path, "pka_model.ckpt"), map_location=torch.device("cpu")
     )
     return prot_model, deprot_model, pka_model
 
@@ -146,7 +161,7 @@ def predict_sites(dataset: MolDataset, model: SitesPrediction) -> list:
         logger=False,
         enable_progress_bar=False,
         enable_model_summary=False,
-        accelerator="cpu",
+        accelerator=accelerator,
         devices=1,
     )
 
@@ -172,7 +187,7 @@ def predict_pka(dataset: MolPairDataset, model: PredictpKa) -> torch.Tensor:
         logger=False,
         enable_progress_bar=False,
         enable_model_summary=False,
-        accelerator="cpu",
+        accelerator=accelerator,
         devices=1,
     )
     pka_predictions = trainer.predict(
@@ -264,6 +279,7 @@ def run_prediction_pipeline(
         )
 
         pka_predictions = predict_pka(pair_dataset, pka_model)
+        
         df = PandasTools.LoadSDF(
             f"{root}/raw/{output}",
             embedProps=True,
@@ -271,7 +287,11 @@ def run_prediction_pipeline(
             includeFingerprints=False,
             molColName="ROMol",
         )
-        df["pka"] = pka_predictions
+
+        if pka_predictions.nelement() == 1:
+            df["pka"] = pka_predictions.item()
+        elif pka_predictions.nelement() > 1:
+            df["pka"] = pka_predictions.to(torch.float32)
 
         PandasTools.WriteSDF(
             df,
@@ -281,4 +301,4 @@ def run_prediction_pipeline(
             properties=["idx", "pka_type", "pka"],
         )
         os.remove(f"{root}/raw/{output}")
-        print(f"Predictions saved to {root}/output/{output}")
+        # print(f"Predictions saved to {root}/output/{output}")

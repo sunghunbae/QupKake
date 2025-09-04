@@ -9,9 +9,8 @@ from typing import Any, Union
 
 from rdkit import Chem
 
-from . import XTB_LOCATION
+from qupkake import XTB_LOCATION
 
-print(XTB_LOCATION)
 
 
 class RunXTB:

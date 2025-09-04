@@ -12,7 +12,7 @@ from rdkit.Chem import AllChem, Descriptors3D, Lipinski
 from rdkit.Chem.rdmolops import GetAdjacencyMatrix
 from torch_geometric.data import Data
 
-from .xtbp import XTBP, RunXTB
+from qupkake.xtbp import XTBP, RunXTB
 
 logger = logging.getLogger(__name__)
 

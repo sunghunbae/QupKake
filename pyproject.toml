@@ -20,7 +20,7 @@ description = "Predict micro-pKa of organic molecules"
 readme = "README.md"
 authors = [{ name = "Omri D Abarbanel", email = "oda6@pitt.edu" },]
 license ="BSD-3-Clause"
-classifiers = ["Programming Language :: Python :: 3",]
+classifiers = ["Programming Language :: Python :: 3"]
 
 [project.urls]
 "Source" = "https://github.com/shualdon/qupkake/"
@@ -30,7 +30,7 @@ classifiers = ["Programming Language :: Python :: 3",]
 where = ["src"]
 
 [tool.setuptools.package-data]
-"qupkake"  = ["xtb/bin/*", "smirks/*.txt"]
+"qupkake"  = ["models/*.ckpt", "xtb/bin/*", "smirks/*.txt"]
 
 [tool.setuptools.dynamic]
 version = {attr = "qupkake.__version__"}

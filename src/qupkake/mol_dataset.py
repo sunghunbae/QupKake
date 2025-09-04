@@ -13,11 +13,9 @@ import torch
 from rdkit import Chem, RDLogger
 from rdkit.Chem import AllChem, PandasTools
 from torch_geometric.data import Data, Dataset
-from tqdm import tqdm
 
-from .featurizer import Featurizer
-from .mol_utils import Tautomerize
-from .tautomerism import ComprehensiveTautomer
+from qupkake.featurizer import Featurizer
+from qupkake.mol_utils import Tautomerize
 
 RDLogger.DisableLog("rdApp.*")
 
@@ -231,9 +229,7 @@ class MolDatasetAbstract(Dataset, ABC):
     def _load_processed_data(self, file_name):
         """Load processed data from file"""
         file_path = os.path.join(self.processed_dir, file_name)
-        return torch.load(file_path, weights_only=False)
-        # PyTorch 2.6 changed default value of `weights_only` argument 
-        # in `torch.load` from `False` to `True`)
+        return torch.load(file_path, weights_only=False) # PyTorch 2.6 changes
 
     @abstractmethod
     def _process_chunk(self, chunk):
@@ -348,9 +344,8 @@ class MolPairDataset(MolDatasetAbstract):
     def _process_chunk(self, chunk, chunk_pos) -> pd.DataFrame:
         """Processing a chunk of data from the dataframe"""
         bad_idx = []
-        pbar = tqdm(chunk.iterrows(), total=len(chunk), position=chunk_pos)
-        for index, row in pbar:
-            pbar.set_description("Processing %s" % row[self.name_col])
+        for index, row in chunk.iterrows():
+            # pbar.set_description("Processing %s" % row[self.name_col])
 
             file_name = (
                 f"{row[self.name_col]}_{row[self.idx_col]}_{row[self.type_col]}_pair.pt"
@@ -510,9 +505,7 @@ class MolPairDataset(MolDatasetAbstract):
         conjugate = self.data.loc[idx, self.type_col]
         data = torch.load(
             os.path.join(self.processed_dir, f"{name}_{atom_idx}_{conjugate}_pair.pt"),
-            weights_only=False,
-            # PyTorch 2.6 changed default value of `weights_only` argument 
-            # in `torch.load` from `False` to `True`)
+            weights_only=False, # PyTorch 2.6 changes
         )
         return data
 
@@ -669,9 +662,7 @@ class MolDataset(MolDatasetAbstract):
     def _process_chunk(self, chunk, chunk_pos) -> pd.DataFrame:
         self.data_list = []
         bad_idx = []
-        pbar = tqdm(chunk.iterrows(), total=len(chunk), position=chunk_pos)
-        for index, row in pbar:
-            pbar.set_description("Processing %s" % row[self.name_col])
+        for index, row in chunk.iterrows():
             if self.data_name:
                 file_name = f"{row[self.name_col]}_{self.data_name}.pt"
             else:
