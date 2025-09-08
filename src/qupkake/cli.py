@@ -323,9 +323,6 @@ def parse_arguments(args):
         metavar="N",
         help="Use Multiprocessing. True if used alone. If followed by a number, its will use that number of suprocesses.",
     )
-    gen_parser.add_argument(
-        "-v", "--version", action="version", version="%(prog)s " + __version__
-    )
 
     parser = MyParser(
         prog="qupkake",
